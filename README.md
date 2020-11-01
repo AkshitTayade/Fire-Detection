@@ -96,37 +96,30 @@ Here is one tricky part. OpenCV reads images in BGR format whereas Matplotlib re
 Here I have used Matchsticks as sample to detect fire.
 <p align="center">
 	<img src="https://github.com/AkshitTayade/Fire-Detection/blob/master/1.png" alt="">
+	(This matplotlib windows opens up when you hit the esc button to end the footage)
 </p>
-
  
-( This matplotlib windows opens up when you hit the esc button to end the footage)
-
-      
-
 You’ll notice one thing that when hovering your cursor over the image, RBG values ( i.e. shown in the red circles on image ) changes. 
 
 Here, we’ll choose two such values where our region (i.e. flames of the matchstick) lies between those two values. ( i.e. lower_region & upper_region)
 
-
-
 After selecting those two values, convert them into a NumPy array and store it in variable respectively. 
 
-lower_bound = np.array([11,33,111])
-upper_bound = np.array([90,255,255])
+	lower_bound = np.array([11,33,111])
+	upper_bound = np.array([90,255,255])
 
-Note : The colour scheme that we got through matplotlib is in RGB format. So we’ll have to convert it into BGR format so that OpenCV can read it.
+**Note:** The colour scheme that we got through matplotlib is in RGB format. So we’ll have to convert it into BGR format so that OpenCV can read it.
 
-Example : Assume we got [ 111, 33, 11 ] through the image. 
-			         ^    ^    ^
-			         R.   G.   B. 	
+**Example:** Assume we got [ 111, 33, 11 ] through the image. 
+			 ^    ^    ^
+			 R.   G.   B. 	
     So we’ll write as [ 11, 33, 111 ] 
-		         ^     ^      ^
-			    B   G  R
-
+		       ^    ^    ^
+		       B    G    R
 
 Now the main part comes, i.e. Image Processing
  
-Step 1 : Appling smoothing technique ( Gaussian Blur )
+#### Step 1 : Appling smoothing technique ( Gaussian Blur )
 	
 	frame_smooth = cv2.GaussianBlur(frame,(7,7),0)
 
@@ -136,7 +129,7 @@ This method accepts the following parameters −
 •	ksize − A Size object representing the size of the kernel.
 •	sigmaX − A variable of the type double representing the Gaussian kernel standard deviation in X direction.
 
-Step 2 : Masking Technique ( NumPy )
+#### Step 2 : Masking Technique ( NumPy )
 
 Create an array of ‘zeros’ with default size same as our size of the frame from live footage . 
 
@@ -152,102 +145,69 @@ Now assign the mask with white colour in BGR format.
 
 Till now we have defined the colour of our flame that we want to detect , and created mask image of white colour (i.e. all 1’s)
 
- Step 3 : ROI operation 
+#### Step 3 : ROI operation 
 
 	img_roi = cv2.bitwise_and(frame_smooth, mask)
 				^
-We want to only detect the flames of the fire. So img1 = frame_smooth gives image of the current frame, and img2 = mask is array of value of colour black ,it's value is 0 in OpenCV.
-But we have changed the colour of our mask to white (i.e. 1). 
+We want to only detect the flames of the fire. So img1 = frame_smooth gives image of the current frame, and img2 = mask is array of value of colour black ,it's value is 0 in OpenCV. But we have changed the colour of our mask to white (i.e. 1). According to the logic table of bitwise_and, if both the inputs are high, the output is high.  Therefore only the pixels that lie in the region of mask are shown as the output.
 
-According to the logic table of bitwise_and, if both the inputs are high, the output is high.  Therefore only the pixels that lie in the region of mask are shown as the output.
-
-
-Step 4 : Define a Threshold
+#### Step 4 : Define a Threshold
 
 Now that we have region of interest to track the colour of flame that we defined earlier,
 We first convert the ROI to HSV format.
 
 	frame_hsv = cv2.cvtColor(img_roi,cv2.COLOR_BGR2HSV)
 
-Note :
-Why do we convert from RBG/BGR to HSV ?
+> Note : Why do we convert from RBG/BGR to HSV ?
 Because the R, G, and B components of an object’s colour in a digital image are all correlated with the amount of light hitting the object, and therefore with each other, image descriptions in terms of those components make object discrimination difficult. Descriptions in terms of hue/lightness/chroma or hue/lightness/saturation are often more relevant.
 
 
 Now the final step is to detect the flames. Keeping the source image as Live Video and limits as lower_bound & upper_bound defined earlier.
 
-image_binary = cv2.inRange(frame_hsv, lower_bound, upper_bound)
+	image_binary = cv2.inRange(frame_hsv, lower_bound, upper_bound)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<p align="center">
+	<img src="https://github.com/AkshitTayade/Fire-Detection/blob/master/2.png" alt="">
+</p>
 
 The code till now looks like this…
 
-import cv2
-import numpy as np 
-import matplotlib.pyplot as plt
+	import cv2
+	import numpy as np 
+	import matplotlib.pyplot as plt
 
-live_Camera = cv2.VideoCapture(0)
+	live_Camera = cv2.VideoCapture(0)
 
-lower_bound = np.array([11,33,111])
-upper_bound = np.array([90,255,255])
+	lower_bound = np.array([11,33,111])
+	upper_bound = np.array([90,255,255])
 
-while(live_Camera.isOpened()):
-    ret, frame = live_Camera.read()
-    frame = cv2.resize(frame,(1280,720))
-    frame = cv2.flip(frame,1)
+	while(live_Camera.isOpened()):
+	    ret, frame = live_Camera.read()
+	    frame = cv2.resize(frame,(1280,720))
+	    frame = cv2.flip(frame,1)
 
-    frame_smooth = cv2.GaussianBlur(frame,(7,7),0)
+	    frame_smooth = cv2.GaussianBlur(frame,(7,7),0)
 
-    mask = np.zeros_like(frame)
-    
-    mask[0:720, 0:1280] = [255,255,255]
+	    mask = np.zeros_like(frame)
 
-    img_roi = cv2.bitwise_and(frame_smooth, mask)
+	    mask[0:720, 0:1280] = [255,255,255]
 
-    frame_hsv = cv2.cvtColor(img_roi,cv2.COLOR_BGR2HSV)
+	    img_roi = cv2.bitwise_and(frame_smooth, mask)
 
-    image_binary = cv2.inRange(frame_hsv, lower_bound, upper_bound)
+	    frame_hsv = cv2.cvtColor(img_roi,cv2.COLOR_BGR2HSV)
 
-    cv2.imshow("Fire Detection",image_binary)
+	    image_binary = cv2.inRange(frame_hsv, lower_bound, upper_bound)
 
-    if cv2.waitKey(10) == 27 :
-        break
+	    cv2.imshow("Fire Detection",image_binary)
 
-live_Camera.release()
-cv2.destroyAllWindows()
+	    if cv2.waitKey(10) == 27 :
+		break
 
-
+	live_Camera.release()
+	cv2.destroyAllWindows()
 
 
-
-
-
-
-
-
-
-
-
-So the output will show only white scale image of the flames of fire. Here is an example below…
-
- 
-
-
-3. Final Modification to the code 
+## 3. Final Modification to the code 
 
 	check_if_fire_detected = cv2.countNonZero(image_binary)
 						^
@@ -258,25 +218,19 @@ Now print this ‘ check_if_fire_detected ‘,
 		
 	print(check_if_fire_detected)
 
-
- 
-
-
-
-
 This is returning some integer values. And when flames are detected the values increased rapidly.
 
+<p align="center">
+	<img src="https://github.com/AkshitTayade/Fire-Detection/blob/master/3.png" alt="">
+</p>
  
-
 
 So, lets write a condition here such that :
 
-if int(check_if_fire_detected) >= 20000 :
-cv2.putText(frame,"FireDetected!",(300,60),cv2.FONT_HERSHEY_COMPLEX,3,(0,0,255),2)
+	if int(check_if_fire_detected) >= 20000 :
+		cv2.putText(frame,"FireDetected!",(300,60),cv2.FONT_HERSHEY_COMPLEX,3,(0,0,255),2)
 
-
-
-Finally the code is done !
+**Finally the code is done!**
 
 import cv2
 import numpy as np 
