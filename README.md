@@ -98,7 +98,6 @@ Here I have used Matchsticks as sample to detect fire.
 <p align="center">
 	<img src="https://github.com/AkshitTayade/Fire-Detection/blob/master/1.png" alt="">
 </p>
-(This matplotlib windows opens up when you hit the esc button to end the footage)
 <br>
 You’ll notice one thing that when hovering your cursor over the image, RBG values ( i.e. shown in the red circles on image ) changes. 
 
