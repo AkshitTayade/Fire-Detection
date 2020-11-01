@@ -9,93 +9,89 @@ For this mini–project we’ll need three libraries :
 
 ## We’ll study this project in three steps :
 
-1. Reading Live video footage :
+1.### Reading Live video footage :
 
 Create a variable which will start the video capturing,
 
-live_Camera = cv2.VideoCapture(0)
+	live_Camera = cv2.VideoCapture(0)
 				     ^
 The function takes argument 0 or 1 depending upon whether you are using primary camera or external webcam .
-i.e  0 – primary camera
+i.e   0 – primary camera
       1 – Secondary camera 
 
 Now start reading the footage in infinite while loop ,
 	
-while(live_Camera.isOpened()):
-		          ^
-isOpened() checks whether the camera has initialized properly
-    		ret, frame = live_Camera.read()
-
-		cv2.imshow("Fire Detection",frame)
+	while(live_Camera.isOpened()):
+		             ^
+   isOpened() checks whether the camera has initialized properly
+    	
+	ret, frame = live_Camera.read()
+	cv2.imshow("Fire Detection",frame)
 
 Now when we’ll have to end or stop the video , Let’s integrate esc button to end the video. But even after pressing the button , we have to release the camera from video capture. So OpenCV provides this functionality. 
     			
-if cv2.waitKey(10) == 27 :
-        		break
+	if cv2.waitKey(10) == 27 :
+		break
 
-live_Camera.release()
-cv2.destroyAllWindows()
-
-		
+	live_Camera.release()
+	cv2.destroyAllWindows()
 
 
+*So the overall code looks something like this till now…*
+
+	import cv2
+	import numpy as np 
+	import matplotlib.pyplot as plt
+
+	live_Camera = cv2.VideoCapture(0)
+
+	while(live_Camera.isOpened()):
+	    ret, frame = live_Camera.read()
+
+	    cv2.imshow("Fire Detection",frame)
+
+	    if cv2.waitKey(10) == 27 :
+		break
+
+	live_Camera.release()
+	cv2.destroyAllWindows()
 
 
-So the overall code looks something like this till now…
-
-import cv2
-import numpy as np 
-import matplotlib.pyplot as plt
-
-live_Camera = cv2.VideoCapture(0)
-
-while(live_Camera.isOpened()):
-    ret, frame = live_Camera.read()
-
-    cv2.imshow("Fire Detection",frame)
-
-    if cv2.waitKey(10) == 27 :
-        break
-
-live_Camera.release()
-cv2.destroyAllWindows()
-
-
-2. Using Image processing which will detect Fire
+2.### Using Image processing which will detect Fire
 
 As we already read the live video. Now let’s just get one single frame from the footage to perform our next operation.
 
 Here we’ll use matplotlib library , and add few line of code below.
 
-img_RGB = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+	img_RGB = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
 		    ^
 Here is one tricky part. OpenCV reads images in BGR format whereas Matplotlib reads image in RGB format. So to get output image in RGB form, we’ll have to convert the frame into RGB from BGR.
 
-img_cap = plt.imshow(img_RGB)
-plt.show()
+	img_cap = plt.imshow(img_RGB)
+	plt.show()
 
 
-Code after adding above lines…
-import cv2
-import numpy as np 
-import matplotlib.pyplot as plt
+**Code after adding above lines…**
+	import cv2
+	import numpy as np 
+	import matplotlib.pyplot as plt
 
-live_Camera = cv2.VideoCapture(0)
+	live_Camera = cv2.VideoCapture(0)
 
-while(live_Camera.isOpened()):
-    ret, frame = live_Camera.read()
+	while(live_Camera.isOpened()):
+	    ret, frame = live_Camera.read()
 
-    cv2.imshow("Fire Detection",frame)
+	    cv2.imshow("Fire Detection",frame)
 
-    if cv2.waitKey(10) == 27 :
-        break
+	    if cv2.waitKey(10) == 27 :
+		break
 
-img_RGB = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-img_cap = plt.imshow(img_RGB)
-plt.show()
+	img_RGB = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+	img_cap = plt.imshow(img_RGB)
+	plt.show()
 
-live_Camera.release()
-cv2.destroyAllWindows()
+	live_Camera.release()
+	cv2.destroyAllWindows()
 
 Here I have used Matchsticks as sample to detect fire.
 
