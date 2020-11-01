@@ -9,7 +9,7 @@ For this mini–project we’ll need three libraries :
 
 ## We’ll study this project in three steps :
 
-1.### Reading Live video footage :
+### 1. Reading Live video footage :
 
 Create a variable which will start the video capturing,
 
@@ -57,7 +57,7 @@ Now when we’ll have to end or stop the video , Let’s integrate esc button to
 	cv2.destroyAllWindows()
 
 
-2.### Using Image processing which will detect Fire
+### 2. Using Image processing which will detect Fire
 
 As we already read the live video. Now let’s just get one single frame from the footage to perform our next operation.
 
@@ -94,9 +94,11 @@ Here is one tricky part. OpenCV reads images in BGR format whereas Matplotlib re
 	cv2.destroyAllWindows()
 
 Here I have used Matchsticks as sample to detect fire.
+<p align="center">
+	<img src="https://github.com/AkshitTayade/Fire-Detection/blob/master/1.png" alt="">
+</p>
 
  
-
 ( This matplotlib windows opens up when you hit the esc button to end the footage)
 
       
