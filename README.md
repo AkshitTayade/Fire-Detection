@@ -94,11 +94,12 @@ Here is one tricky part. OpenCV reads images in BGR format whereas Matplotlib re
 	cv2.destroyAllWindows()
 
 Here I have used Matchsticks as sample to detect fire.
+
 <p align="center">
 	<img src="https://github.com/AkshitTayade/Fire-Detection/blob/master/1.png" alt="">
 	(This matplotlib windows opens up when you hit the esc button to end the footage)
 </p>
- 
+<br>
 You’ll notice one thing that when hovering your cursor over the image, RBG values ( i.e. shown in the red circles on image ) changes. 
 
 Here, we’ll choose two such values where our region (i.e. flames of the matchstick) lies between those two values. ( i.e. lower_region & upper_region)
@@ -232,44 +233,44 @@ So, lets write a condition here such that :
 
 **Finally the code is done!**
 
-import cv2
-import numpy as np 
-import matplotlib.pyplot as plt
+	import cv2
+	import numpy as np 
+	import matplotlib.pyplot as plt
 
-live_Camera = cv2.VideoCapture(0)
+	live_Camera = cv2.VideoCapture(0)
 
-lower_bound = np.array([11,33,111])
-upper_bound = np.array([90,255,255])
+	lower_bound = np.array([11,33,111])
+	upper_bound = np.array([90,255,255])
 
-while(live_Camera.isOpened()):
-    ret, frame = live_Camera.read()
-    frame = cv2.resize(frame,(1280,720))
-    frame = cv2.flip(frame,1)
+	while(live_Camera.isOpened()):
+	    ret, frame = live_Camera.read()
+	    frame = cv2.resize(frame,(1280,720))
+	    frame = cv2.flip(frame,1)
 
-    frame_smooth = cv2.GaussianBlur(frame,(7,7),0)
+	    frame_smooth = cv2.GaussianBlur(frame,(7,7),0)
 
-    mask = np.zeros_like(frame)
-    
-    mask[0:720, 0:1280] = [255,255,255]
+	    mask = np.zeros_like(frame)
 
-    img_roi = cv2.bitwise_and(frame_smooth, mask)
+	    mask[0:720, 0:1280] = [255,255,255]
 
-    frame_hsv = cv2.cvtColor(img_roi,cv2.COLOR_BGR2HSV)
+	    img_roi = cv2.bitwise_and(frame_smooth, mask)
 
-    image_binary = cv2.inRange(frame_hsv, lower_bound, upper_bound)
+	    frame_hsv = cv2.cvtColor(img_roi,cv2.COLOR_BGR2HSV)
 
-    check_if_fire_detected = cv2.countNonZero(image_binary)
-    
-    if int(check_if_fire_detected) >= 20000 :
-        cv2.putText(frame,"Fire Detected !",(300,60),cv2.FONT_HERSHEY_COMPLEX,3,(0,0,255),2)
-       
+	    image_binary = cv2.inRange(frame_hsv, lower_bound, upper_bound)
 
-    cv2.imshow("Fire Detection",frame)
+	    check_if_fire_detected = cv2.countNonZero(image_binary)
 
-    if cv2.waitKey(10) == 27 :
-        break
+	    if int(check_if_fire_detected) >= 20000 :
+		cv2.putText(frame,"Fire Detected !",(300,60),cv2.FONT_HERSHEY_COMPLEX,3,(0,0,255),2)
 
-live_Camera.release()
-cv2.destroyAllWindows()
+
+	    cv2.imshow("Fire Detection",frame)
+
+	    if cv2.waitKey(10) == 27 :
+		break
+
+	live_Camera.release()
+	cv2.destroyAllWindows()
 
 
